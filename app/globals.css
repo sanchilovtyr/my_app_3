@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-unbounded: "Unbounded", sans-serif;
+  --font-manrope: "Manrope", sans-serif;
+  --font-plex-mono: "IBM Plex Mono", monospace;
+}
+
+@layer base {
+  ::selection {
+    background-color: #f2a93b;
+    color: #12213a;
+  }
+
+  :focus-visible {
+    outline: 2px solid #0e7c7b;
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .waypoint-num {
+    @apply font-mono text-xs tracking-wider;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
