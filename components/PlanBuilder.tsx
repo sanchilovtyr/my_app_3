@@ -1,11 +1,14 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { QUESTIONS } from "@/lib/questions";
 import { generatePlan } from "@/lib/ruleEngine";
 import { Answers, GeneratedPlan, PlanEntry, Phase } from "@/lib/types";
 
 type RawAnswers = Record<string, string>;
+
+const EMAIL_STORAGE_KEY = "promoplan_email";
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const PHASE_META: Record<Phase, { title: string; note: string }> = {
   foundation: {
@@ -81,10 +84,113 @@ function PlanColumn({ phase, entries }: { phase: Phase; entries: PlanEntry[] }) 
   );
 }
 
+function LockedPhaseCard() {
+  const meta = PHASE_META.retention;
+  return (
+    <div className="print:hidden mb-10 rounded-xl border border-dashed border-ink-900/20 bg-soft p-6 text-center">
+      <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-ink-900 text-brand">
+        🔒
+      </div>
+      <h3 className="font-display text-lg text-ink-900 mb-1.5">{meta.title}</h3>
+      <p className="mx-auto mb-4 max-w-md text-sm text-muted">
+        На пробном тарифе этот этап скрыт. Оформите платную подписку, чтобы открыть удержание
+        клиентов и повторные продажи — вместе с чек-листами и обновлениями плана.
+      </p>
+      <a
+        href="#pricing"
+        className="inline-block rounded-full bg-ink-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-ink-800"
+      >
+        Открыть все этапы
+      </a>
+    </div>
+  );
+}
+
+function EmailGate({ onRegister }: { onRegister: (email: string) => void }) {
+  const [value, setValue] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!EMAIL_RE.test(value.trim())) {
+      setError("Введите корректный email");
+      return;
+    }
+    setError(null);
+    onRegister(value.trim());
+  };
+
+  return (
+    <div className="mx-auto max-w-md">
+      <span className="inline-block rounded-full bg-violet-soft px-3 py-1 text-xs font-bold text-violet">
+        Шаг 0 · 30 секунд
+      </span>
+      <h2 className="font-display text-2xl md:text-3xl text-ink-900 mt-4 mb-1.5">
+        Для начала — email
+      </h2>
+      <p className="text-muted mb-6">
+        Понадобится, чтобы сохранить ваш план и прислать его в PDF. Пароль не нужен.
+      </p>
+      <form onSubmit={submit} className="grid gap-3">
+        <input
+          type="email"
+          required
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder="you@company.ru"
+          className="w-full rounded-xl border border-line bg-white p-4 text-ink-900 outline-none transition-colors focus:border-violet"
+        />
+        {error && <p className="text-sm text-red-600">{error}</p>}
+        <button
+          type="submit"
+          className="rounded-xl bg-ink-900 px-5 py-4 text-sm font-medium text-white transition-colors hover:bg-ink-800"
+        >
+          Зарегистрироваться и продолжить
+        </button>
+        <p className="text-xs text-muted">
+          Отправляя email, вы соглашаетесь с обработкой персональных данных.
+        </p>
+      </form>
+    </div>
+  );
+}
+
 export default function PlanBuilder() {
+  const [email, setEmail] = useState<string | null>(null);
+  const [emailLoaded, setEmailLoaded] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
   const [raw, setRaw] = useState<RawAnswers>({});
   const [plan, setPlan] = useState<GeneratedPlan | null>(null);
+  const [pdfNotice, setPdfNotice] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(EMAIL_STORAGE_KEY);
+      if (stored) setEmail(stored);
+    } catch {
+      // localStorage недоступен (например, приватный режим) — просто покажем форму регистрации
+    } finally {
+      setEmailLoaded(true);
+    }
+  }, []);
+
+  const registerEmail = (value: string) => {
+    setEmail(value);
+    try {
+      window.localStorage.setItem(EMAIL_STORAGE_KEY, value);
+    } catch {
+      // не критично для прототипа, если сохранить не получилось
+    }
+  };
+
+  const changeEmail = () => {
+    setEmail(null);
+    try {
+      window.localStorage.removeItem(EMAIL_STORAGE_KEY);
+    } catch {
+      // не критично
+    }
+  };
 
   const question = QUESTIONS[stepIndex];
   const isLast = stepIndex === QUESTIONS.length - 1;
@@ -108,14 +214,42 @@ export default function PlanBuilder() {
     setRaw({});
     setStepIndex(0);
     setPlan(null);
+    setPdfNotice(null);
+  };
+
+  const downloadPdf = () => {
+    setPdfNotice(null);
+    window.print();
+  };
+
+  const emailPdf = () => {
+    downloadPdf();
+    setPdfNotice(
+      `В боевой версии PDF автоматически придёт на ${email}. Пока сохраните файл из диалога печати — отправка на почту требует бэкенда (см. README).`
+    );
   };
 
   const answeredValue = raw[question?.id];
 
+  if (!emailLoaded) {
+    return <div id="wizard" className="scroll-mt-24" />;
+  }
+
   return (
     <div id="wizard" className="scroll-mt-24">
-      {!plan && (
+      {!email && <EmailGate onRegister={registerEmail} />}
+
+      {email && !plan && (
         <div className="mx-auto max-w-xl">
+          <div className="mb-4 flex items-center justify-between text-xs text-muted">
+            <span>
+              Вы вошли как <b className="text-ink-900">{email}</b>
+            </span>
+            <button onClick={changeEmail} className="underline underline-offset-4 hover:text-ink-900">
+              Изменить email
+            </button>
+          </div>
+
           <div className="mb-6 flex items-center gap-3">
             <span className="font-mono text-xs text-muted">
               {String(stepIndex + 1).padStart(2, "0")} / {String(QUESTIONS.length).padStart(2, "0")}
@@ -129,9 +263,7 @@ export default function PlanBuilder() {
           </div>
 
           <h2 className="font-display text-2xl md:text-3xl text-ink-900 mb-1">{question.title}</h2>
-          {question.subtitle && (
-            <p className="text-muted mb-6">{question.subtitle}</p>
-          )}
+          {question.subtitle && <p className="text-muted mb-6">{question.subtitle}</p>}
           {!question.subtitle && <div className="mb-6" />}
 
           <div className="grid gap-3">
@@ -162,28 +294,48 @@ export default function PlanBuilder() {
         </div>
       )}
 
-      {plan && (
+      {email && plan && (
         <div>
-          <div className="mb-8 rounded-xl border border-violet/30 bg-violet/5 p-5 md:p-6">
-            <p className="font-display text-lg md:text-xl text-ink-900">{plan.summary}</p>
+          <div id="print-plan">
+            <div className="mb-8 rounded-xl border border-violet/30 bg-violet/5 p-5 md:p-6">
+              <p className="font-display text-lg md:text-xl text-ink-900">{plan.summary}</p>
+            </div>
+
+            <PlanColumn phase="foundation" entries={plan.foundation} />
+            <PlanColumn phase="traffic" entries={plan.traffic} />
           </div>
 
-          <PlanColumn phase="foundation" entries={plan.foundation} />
-          <PlanColumn phase="traffic" entries={plan.traffic} />
-          <PlanColumn phase="retention" entries={plan.retention} />
+          <LockedPhaseCard />
 
-          <div className="mt-8 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between rounded-xl border border-line bg-white p-5">
+          <div className="print:hidden flex flex-col gap-3 rounded-xl border border-line bg-white p-5 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-muted">
-              Это демонстрационная версия плана. В полной подписке — экспорт в PDF, чек-листы с
-              отметками о выполнении и обновления модулей.
+              Пробный план показывает первые 2 этапа из 3. Полная подписка открывает все этапы,
+              чек-листы и еженедельные обновления.
             </p>
-            <button
-              onClick={restart}
-              className="shrink-0 rounded-full border border-ink-900/20 px-5 py-2 text-sm font-medium text-ink-900 hover:bg-ink-900 hover:text-white transition-colors"
-            >
-              Пройти заново
-            </button>
+            <div className="flex shrink-0 flex-wrap gap-2">
+              <button
+                onClick={downloadPdf}
+                className="rounded-full border border-ink-900/20 px-4 py-2 text-sm font-medium text-ink-900 transition-colors hover:bg-ink-900 hover:text-white"
+              >
+                Скачать PDF
+              </button>
+              <button
+                onClick={emailPdf}
+                className="rounded-full border border-ink-900/20 px-4 py-2 text-sm font-medium text-ink-900 transition-colors hover:bg-ink-900 hover:text-white"
+              >
+                Получить PDF на почту
+              </button>
+              <button
+                onClick={restart}
+                className="rounded-full bg-ink-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-ink-800"
+              >
+                Пройти заново
+              </button>
+            </div>
           </div>
+          {pdfNotice && (
+            <p className="print:hidden mt-3 text-xs font-mono text-violet">{pdfNotice}</p>
+          )}
         </div>
       )}
     </div>

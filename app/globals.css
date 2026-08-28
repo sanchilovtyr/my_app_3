@@ -33,3 +33,28 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* "Скачать PDF" использует системный диалог печати браузера (Ctrl/Cmd+P -> Сохранить как PDF),
+   это обходит проблему с отсутствием кириллицы во встроенных шрифтах PDF-библиотек.
+   Правило ниже прячет всё, кроме содержимого плана, с сохранением исходной вёрстки. */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #print-plan,
+  #print-plan * {
+    visibility: visible;
+  }
+  #print-plan {
+    position: absolute;
+    inset: 0;
+    padding: 24px;
+  }
+  details {
+    break-inside: avoid;
+  }
+  details:not([open]) > *:not(summary) {
+    display: block !important;
+  }
+}
+

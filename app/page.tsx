@@ -98,7 +98,7 @@ export default function Home() {
       </section>
 
       {/* PRICING */}
-      <section className="bg-gradient-to-b from-white to-[#FBFBFD] py-16 md:py-24">
+      <section id="pricing" className="bg-gradient-to-b from-white to-[#FBFBFD] py-16 md:py-24">
         <div className="mx-auto max-w-6xl px-5 md:px-8">
           <div className="mx-auto mb-10 max-w-xl text-center">
             <h2 className="mb-3 font-display text-3xl tracking-tight text-ink-900 md:text-4xl">
