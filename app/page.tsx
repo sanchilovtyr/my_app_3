@@ -14,7 +14,7 @@ export default function Home() {
             <span className="relative h-[30px] w-[30px] -rotate-[20deg] rounded-[50%_50%_50%_8px] bg-brand">
               <span className="absolute left-[9px] top-[9px] h-2 w-2 rounded-full bg-ink-900" />
             </span>
-            Маршрут
+            Ключевое слово
           </div>
           <a
             href="#wizard"
@@ -30,21 +30,21 @@ export default function Home() {
         <div className="mx-auto grid max-w-6xl gap-12 px-5 py-16 md:grid-cols-[1.04fr_0.96fr] md:items-center md:px-8 md:py-20">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3 py-1.5 text-xs font-bold text-white/85 before:h-[7px] before:w-[7px] before:rounded-full before:bg-brand">
-              Для владельцев малого и среднего бизнеса
+              Навигатор для владельцев малого и среднего бизнеса
             </span>
             <h1 className="my-5 max-w-[650px] font-display text-4xl leading-[1.12] tracking-tight text-white md:text-5xl">
-              Из хаоса в продвижении — в понятный маршрут к клиентам
+              Из хаоса в маркетинге — в понятный маршрут к клиентам
             </h1>
             <p className="mb-7 max-w-[570px] text-lg text-white/65">
-              Отвечаете на 7 вопросов о своём бизнесе — получаете пошаговый план: что делать
-              сначала, что потом и почему именно так. Без общих советов «продвигайтесь в
-              соцсетях».
+              Отвечаете на 7 вопросов о своём бизнесе — получаете пошаговый план привлечения
+              клиентов: что делать сначала, что потом и почему именно так. Без общих советов
+              «продвигайтесь в соцсетях».
             </p>
             <a
               href="#wizard"
               className="inline-block rounded-[9px] bg-brand px-6 py-3.5 text-sm font-extrabold text-ink-900 shadow-[0_10px_25px_rgba(0,0,0,0.1)] transition-transform hover:-translate-y-0.5"
             >
-              Построить план бесплатно
+              Попробовать бесплатно
             </a>
             <div className="mt-6 flex flex-wrap gap-5 text-[13px] text-white/70">
               <span className="before:mr-1.5 before:text-brand before:content-['✦']">
@@ -67,8 +67,8 @@ export default function Home() {
               Превратите хаос в понятную схему — за 5 минут
             </h2>
             <p className="text-muted">
-              Не тратьте время на разрозненные советы: движок правил соберёт их в один
-              выполнимый маршрут привлечения клиентов.
+              Не тратьте время на разрозненные советы: наш сервис соберёт их в один понятный
+              маршрут привлечения клиентов.
             </p>
           </div>
           <JourneySection />
@@ -118,7 +118,7 @@ export default function Home() {
 
       <footer className="bg-ink-900 py-7 text-xs text-white/55">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-5 px-5 md:px-8">
-          <span>© {new Date().getFullYear()} Маршрут</span>
+          <span>© {new Date().getFullYear()} Ключевое слово</span>
           <span>Прототип — платёжная интеграция и личный кабинет в разработке</span>
         </div>
       </footer>

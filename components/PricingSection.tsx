@@ -4,6 +4,20 @@ import { useState } from "react";
 
 const PLANS = [
   {
+    id: "trial",
+    name: "Пробный",
+    price: "0 ₽",
+    period: "разово",
+    description: "Чтобы попробовать сервис и увидеть, как выглядит ваш план",
+    features: [
+      "Один персональный план продвижения",
+      "Полный доступ к шагам этого плана",
+      "Без обновлений и сохранения истории",
+    ],
+    highlighted: false,
+    free: true,
+  },
+  {
     id: "start",
     name: "Старт",
     price: "990 ₽",
@@ -50,15 +64,23 @@ const PLANS = [
 export default function PricingSection() {
   const [clicked, setClicked] = useState<string | null>(null);
 
+  const handleClick = (plan: (typeof PLANS)[number]) => {
+    if (plan.free) {
+      document.querySelector("#wizard")?.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+    setClicked(plan.id);
+  };
+
   return (
     <div>
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {PLANS.map((plan) => (
           <div
             key={plan.id}
-            className={`flex flex-col rounded-2xl border p-6 md:p-7 ${
+            className={`flex flex-col rounded-2xl border p-6 ${
               plan.highlighted
-                ? "border-brand bg-ink-900 text-white shadow-lg md:-translate-y-2"
+                ? "border-brand bg-ink-900 text-white shadow-lg lg:-translate-y-2"
                 : "border-line bg-white text-ink-900"
             }`}
           >
@@ -67,12 +89,17 @@ export default function PricingSection() {
                 Популярный выбор
               </span>
             )}
+            {plan.free && (
+              <span className="mb-3 inline-block w-fit rounded-full bg-violet-soft px-3 py-1 text-xs font-mono text-violet">
+                Для знакомства
+              </span>
+            )}
             <h3 className="font-display text-xl mb-1">{plan.name}</h3>
             <p className={`text-sm mb-4 ${plan.highlighted ? "text-white/70" : "text-muted"}`}>
               {plan.description}
             </p>
             <div className="mb-6">
-              <span className="font-display text-3xl">{plan.price}</span>
+              <span className="font-display text-3xl">{plan.price}</span>{" "}
               <span className={plan.highlighted ? "text-white/60" : "text-muted"}>
                 {plan.period}
               </span>
@@ -86,14 +113,16 @@ export default function PricingSection() {
               ))}
             </ul>
             <button
-              onClick={() => setClicked(plan.id)}
+              onClick={() => handleClick(plan)}
               className={`w-full rounded-full px-5 py-3 text-sm font-medium transition-colors ${
                 plan.highlighted
                   ? "bg-brand text-ink-900 hover:bg-brand/90"
+                  : plan.free
+                  ? "border border-ink-900/20 bg-white text-ink-900 hover:bg-ink-900 hover:text-white"
                   : "bg-ink-900 text-white hover:bg-ink-800"
               }`}
             >
-              Оформить подписку
+              {plan.free ? "Попробовать бесплатно" : "Оформить подписку"}
             </button>
             {clicked === plan.id && (
               <p className="mt-3 text-xs font-mono text-violet">
