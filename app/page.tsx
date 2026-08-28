@@ -1,91 +1,123 @@
-import RouteHero from "@/components/RouteHero";
+import HeroPreviewCard from "@/components/HeroPreviewCard";
+import JourneySection from "@/components/JourneySection";
+import CasesSection from "@/components/CasesSection";
 import PlanBuilder from "@/components/PlanBuilder";
 import PricingSection from "@/components/PricingSection";
 
 export default function Home() {
   return (
     <main>
-      {/* HERO */}
-      <section className="bg-ink-900">
-        <div className="mx-auto max-w-6xl px-5 md:px-8 pt-8 pb-12 md:pt-12 md:pb-16">
-          <nav className="flex items-center justify-between mb-10 md:mb-14">
-            <span className="font-display text-lg text-paper">Маршрут</span>
-            <a
-              href="#wizard"
-              className="rounded-full border border-paper/25 px-4 py-2 text-sm text-paper hover:bg-paper hover:text-ink-900 transition-colors"
-            >
-              Построить план
-            </a>
-          </nav>
+      {/* HEADER */}
+      <header className="border-b border-white/10 bg-ink-900">
+        <div className="mx-auto flex h-[76px] max-w-6xl items-center justify-between px-5 md:px-8">
+          <div className="flex items-center gap-2.5 font-extrabold tracking-tight text-white">
+            <span className="relative h-[30px] w-[30px] -rotate-[20deg] rounded-[50%_50%_50%_8px] bg-brand">
+              <span className="absolute left-[9px] top-[9px] h-2 w-2 rounded-full bg-ink-900" />
+            </span>
+            Маршрут
+          </div>
+          <a
+            href="#wizard"
+            className="rounded-[9px] bg-brand px-5 py-3 text-sm font-extrabold text-ink-900 shadow-[0_10px_25px_rgba(0,0,0,0.1)] transition-transform hover:-translate-y-0.5"
+          >
+            Построить план
+          </a>
+        </div>
+      </header>
 
-          <div className="max-w-2xl mb-10 md:mb-14">
-            <span className="font-mono text-xs uppercase tracking-widest text-route-amber">
+      {/* HERO */}
+      <section className="bg-ink-900 bg-[radial-gradient(circle_at_77%_24%,rgba(118,88,246,0.25),transparent_35%),radial-gradient(circle_at_18%_110%,rgba(203,255,67,0.13),transparent_40%)]">
+        <div className="mx-auto grid max-w-6xl gap-12 px-5 py-16 md:grid-cols-[1.04fr_0.96fr] md:items-center md:px-8 md:py-20">
+          <div>
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3 py-1.5 text-xs font-bold text-white/85 before:h-[7px] before:w-[7px] before:rounded-full before:bg-brand">
               Для владельцев малого и среднего бизнеса
             </span>
-            <h1 className="font-display text-3xl md:text-5xl leading-tight text-paper mt-3 mb-5">
-              Понятный маршрут к клиентам из интернета — без хаоса из тридцати вкладок
+            <h1 className="my-5 max-w-[650px] font-display text-4xl leading-[1.12] tracking-tight text-white md:text-5xl">
+              Из хаоса в продвижении — в понятный маршрут к клиентам
             </h1>
-            <p className="text-paper/70 text-base md:text-lg">
+            <p className="mb-7 max-w-[570px] text-lg text-white/65">
               Отвечаете на 7 вопросов о своём бизнесе — получаете пошаговый план: что делать
-              сначала, что потом, и почему именно так. Без общих советов «продвигайтесь в
+              сначала, что потом и почему именно так. Без общих советов «продвигайтесь в
               соцсетях».
             </p>
+            <a
+              href="#wizard"
+              className="inline-block rounded-[9px] bg-brand px-6 py-3.5 text-sm font-extrabold text-ink-900 shadow-[0_10px_25px_rgba(0,0,0,0.1)] transition-transform hover:-translate-y-0.5"
+            >
+              Построить план бесплатно
+            </a>
+            <div className="mt-6 flex flex-wrap gap-5 text-[13px] text-white/70">
+              <span className="before:mr-1.5 before:text-brand before:content-['✦']">
+                Первый план бесплатно
+              </span>
+              <span className="before:mr-1.5 before:text-brand before:content-['✦']">
+                Без привязки карты
+              </span>
+            </div>
           </div>
-
-          <RouteHero />
+          <HeroPreviewCard />
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
-      <section className="mx-auto max-w-6xl px-5 md:px-8 py-14 md:py-20">
-        <div className="grid gap-8 md:grid-cols-3">
-          {[
-            {
-              n: "01",
-              title: "Отвечаете на вопросы",
-              text: "О сфере бизнеса, бюджете, целях и текущих каналах — 2 минуты.",
-            },
-            {
-              n: "02",
-              title: "Получаете маршрут",
-              text: "План разбит на этапы: фундамент, привлечение трафика, удержание клиентов.",
-            },
-            {
-              n: "03",
-              title: "Идёте по шагам",
-              text: "Каждый пункт — конкретное действие, а не абстрактная рекомендация.",
-            },
-          ].map((s) => (
-            <div key={s.n}>
-              <span className="font-mono text-sm text-route-teal">{s.n}</span>
-              <h3 className="font-display text-xl text-ink-900 mt-2 mb-2">{s.title}</h3>
-              <p className="text-ink-900/60">{s.text}</p>
-            </div>
-          ))}
+      {/* JOURNEY */}
+      <section className="bg-gradient-to-b from-white to-soft py-16 md:py-24">
+        <div className="mx-auto max-w-6xl px-5 md:px-8">
+          <div className="mx-auto mb-12 max-w-xl text-center">
+            <h2 className="mb-3 font-display text-3xl tracking-tight text-ink-900 md:text-4xl">
+              Превратите хаос в понятную схему — за 5 минут
+            </h2>
+            <p className="text-muted">
+              Не тратьте время на разрозненные советы: движок правил соберёт их в один
+              выполнимый маршрут привлечения клиентов.
+            </p>
+          </div>
+          <JourneySection />
         </div>
       </section>
 
       {/* WIZARD */}
-      <section className="bg-white/40 border-y border-ink-900/10">
-        <div className="mx-auto max-w-4xl px-5 md:px-8 py-14 md:py-20">
+      <section className="border-y border-line bg-white" id="wizard-section">
+        <div className="mx-auto max-w-4xl px-5 py-16 md:px-8 md:py-24">
           <PlanBuilder />
         </div>
       </section>
 
-      {/* PRICING */}
-      <section className="mx-auto max-w-6xl px-5 md:px-8 py-14 md:py-20">
-        <div className="mb-10 max-w-xl">
-          <h2 className="font-display text-2xl md:text-3xl text-ink-900 mb-3">Тарифы</h2>
-          <p className="text-ink-900/60">
-            Бесплатно можно построить и посмотреть план один раз. Подписка открывает
-            чек-листы, обновления и экспорт.
-          </p>
+      {/* CASES */}
+      <section className="bg-ink-900 py-16 text-white md:py-24">
+        <div className="mx-auto max-w-6xl px-5 md:px-8">
+          <div className="mx-auto mb-12 max-w-xl text-center">
+            <h2 className="mb-3 font-display text-3xl tracking-tight text-white md:text-4xl">
+              План превращается в измеримый результат
+            </h2>
+            <p className="text-white/60">
+              Когда каналы и первые шаги не приходится собирать из разрозненных советов.
+            </p>
+          </div>
+          <CasesSection />
         </div>
-        <PricingSection />
       </section>
 
-      <footer className="border-t border-ink-900/10">
-        <div className="mx-auto max-w-6xl px-5 md:px-8 py-8 flex flex-col md:flex-row gap-3 md:items-center md:justify-between text-sm text-ink-900/50">
+      {/* PRICING */}
+      <section className="bg-gradient-to-b from-white to-[#FBFBFD] py-16 md:py-24">
+        <div className="mx-auto max-w-6xl px-5 md:px-8">
+          <div className="mx-auto mb-10 max-w-xl text-center">
+            <h2 className="mb-3 font-display text-3xl tracking-tight text-ink-900 md:text-4xl">
+              Подписка, которая окупается первым тестом
+            </h2>
+            <p className="text-muted">
+              Бесплатно можно построить и посмотреть план один раз. Подписка открывает
+              чек-листы, обновления и экспорт.
+            </p>
+          </div>
+          <PricingSection />
+          <p className="mt-6 text-center text-xs text-muted">
+            Оплата российской картой или через СБП · отмена подписки в любой момент
+          </p>
+        </div>
+      </section>
+
+      <footer className="bg-ink-900 py-7 text-xs text-white/55">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-5 px-5 md:px-8">
           <span>© {new Date().getFullYear()} Маршрут</span>
           <span>Прототип — платёжная интеграция и личный кабинет в разработке</span>
         </div>

@@ -6,30 +6,28 @@ const config: Config = {
     extend: {
       colors: {
         ink: {
-          DEFAULT: "#12213A",
-          950: "#0B1626",
-          900: "#12213A",
-          800: "#1B3054",
+          DEFAULT: "#111525",
+          950: "#0B0E1A",
+          900: "#111525",
+          800: "#1A2036",
         },
-        paper: "#EEEAE0",
-        route: {
-          teal: "#0E7C7B",
-          tealDark: "#0A5F5E",
-          amber: "#F2A93B",
-          coral: "#E85D4E",
+        paper: "#FFFFFF",
+        soft: "#F6F6F8",
+        line: "#E7E8EE",
+        muted: "#70758A",
+        brand: {
+          DEFAULT: "#CBFF43",
+          soft: "#E7F7D7",
+        },
+        violet: {
+          DEFAULT: "#7658F6",
+          soft: "#F0EDFF",
         },
       },
       fontFamily: {
         display: ["var(--font-unbounded)", "sans-serif"],
         body: ["var(--font-manrope)", "sans-serif"],
         mono: ["var(--font-plex-mono)", "monospace"],
-      },
-      backgroundImage: {
-        "grid-paper":
-          "linear-gradient(rgba(18,33,58,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(18,33,58,0.05) 1px, transparent 1px)",
-      },
-      backgroundSize: {
-        grid: "28px 28px",
       },
     },
   },

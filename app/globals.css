@@ -10,12 +10,12 @@
 
 @layer base {
   ::selection {
-    background-color: #f2a93b;
-    color: #12213a;
+    background-color: #cbff43;
+    color: #111525;
   }
 
   :focus-visible {
-    outline: 2px solid #0e7c7b;
+    outline: 2px solid #7658f6;
     outline-offset: 2px;
   }
 }

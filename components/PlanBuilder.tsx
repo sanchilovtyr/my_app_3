@@ -39,36 +39,36 @@ function PlanColumn({ phase, entries }: { phase: Phase; entries: PlanEntry[] }) 
   if (entries.length === 0) return null;
   return (
     <div className="mb-10">
-      <div className="flex items-baseline justify-between border-b border-ink-900/15 pb-2 mb-4">
+      <div className="flex items-baseline justify-between border-b border-line pb-2 mb-4">
         <h3 className="font-display text-lg md:text-xl text-ink-900">{meta.title}</h3>
-        <span className="hidden md:block text-sm text-ink-900/50">{meta.note}</span>
+        <span className="hidden md:block text-sm text-muted">{meta.note}</span>
       </div>
-      <p className="md:hidden text-sm text-ink-900/50 mb-4">{meta.note}</p>
+      <p className="md:hidden text-sm text-muted mb-4">{meta.note}</p>
       <div className="space-y-4">
         {entries.map((entry, i) => (
           <details
             key={entry.module.id}
-            className="group rounded-xl border border-ink-900/15 bg-white/60 open:bg-white transition-colors"
+            className="group rounded-xl border border-line bg-white open:bg-white transition-colors"
             open={i === 0}
           >
             <summary className="flex cursor-pointer items-start gap-4 list-none p-4 md:p-5">
-              <span className="waypoint-num shrink-0 mt-1 flex h-7 w-7 items-center justify-center rounded-full bg-route-teal text-paper">
+              <span className="waypoint-num shrink-0 mt-1 flex h-7 w-7 items-center justify-center rounded-full bg-violet text-paper">
                 {i + 1}
               </span>
               <span className="flex-1">
                 <span className="block font-display text-base md:text-lg text-ink-900">
                   {entry.module.title}
                 </span>
-                <span className="block text-sm text-ink-900/60 mt-1">{entry.module.timeToResult}</span>
+                <span className="block text-sm text-muted mt-1">{entry.module.timeToResult}</span>
               </span>
-              <span className="mt-1 text-ink-900/40 transition-transform group-open:rotate-180">⌄</span>
+              <span className="mt-1 text-ink-900/30 transition-transform group-open:rotate-180">⌄</span>
             </summary>
             <div className="px-4 md:px-5 pb-5 pl-[3.25rem] md:pl-[3.75rem]">
               <p className="text-sm md:text-base text-ink-900/80 mb-3">{entry.reason}</p>
               <ul className="space-y-2">
                 {entry.module.steps.map((step, si) => (
                   <li key={si} className="flex gap-2 text-sm md:text-base text-ink-900/90">
-                    <span className="text-route-amber font-mono">→</span>
+                    <span className="text-brand font-mono">→</span>
                     <span>{step}</span>
                   </li>
                 ))}
@@ -117,12 +117,12 @@ export default function PlanBuilder() {
       {!plan && (
         <div className="mx-auto max-w-xl">
           <div className="mb-6 flex items-center gap-3">
-            <span className="font-mono text-xs text-ink-900/50">
+            <span className="font-mono text-xs text-muted">
               {String(stepIndex + 1).padStart(2, "0")} / {String(QUESTIONS.length).padStart(2, "0")}
             </span>
-            <div className="h-1 flex-1 rounded-full bg-ink-900/10">
+            <div className="h-1 flex-1 rounded-full bg-line">
               <div
-                className="h-1 rounded-full bg-route-teal transition-all"
+                className="h-1 rounded-full bg-violet transition-all"
                 style={{ width: `${Math.max(progress, 6)}%` }}
               />
             </div>
@@ -130,7 +130,7 @@ export default function PlanBuilder() {
 
           <h2 className="font-display text-2xl md:text-3xl text-ink-900 mb-1">{question.title}</h2>
           {question.subtitle && (
-            <p className="text-ink-900/60 mb-6">{question.subtitle}</p>
+            <p className="text-muted mb-6">{question.subtitle}</p>
           )}
           {!question.subtitle && <div className="mb-6" />}
 
@@ -139,14 +139,14 @@ export default function PlanBuilder() {
               <button
                 key={opt.value}
                 onClick={() => selectOption(opt.value)}
-                className={`text-left rounded-xl border p-4 transition-colors hover:border-route-teal hover:bg-route-teal/5 ${
+                className={`text-left rounded-xl border p-4 transition-colors hover:border-violet hover:bg-violet/5 ${
                   answeredValue === opt.value
-                    ? "border-route-teal bg-route-teal/10"
-                    : "border-ink-900/15 bg-white/50"
+                    ? "border-violet bg-violet/10"
+                    : "border-line bg-white/50"
                 }`}
               >
                 <span className="block font-medium text-ink-900">{opt.label}</span>
-                {opt.hint && <span className="block text-sm text-ink-900/50 mt-0.5">{opt.hint}</span>}
+                {opt.hint && <span className="block text-sm text-muted mt-0.5">{opt.hint}</span>}
               </button>
             ))}
           </div>
@@ -154,7 +154,7 @@ export default function PlanBuilder() {
           {stepIndex > 0 && (
             <button
               onClick={goBack}
-              className="mt-6 text-sm text-ink-900/50 hover:text-ink-900 underline underline-offset-4"
+              className="mt-6 text-sm text-muted hover:text-ink-900 underline underline-offset-4"
             >
               ← Назад
             </button>
@@ -164,7 +164,7 @@ export default function PlanBuilder() {
 
       {plan && (
         <div>
-          <div className="mb-8 rounded-xl border border-route-teal/30 bg-route-teal/5 p-5 md:p-6">
+          <div className="mb-8 rounded-xl border border-violet/30 bg-violet/5 p-5 md:p-6">
             <p className="font-display text-lg md:text-xl text-ink-900">{plan.summary}</p>
           </div>
 
@@ -172,14 +172,14 @@ export default function PlanBuilder() {
           <PlanColumn phase="traffic" entries={plan.traffic} />
           <PlanColumn phase="retention" entries={plan.retention} />
 
-          <div className="mt-8 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between rounded-xl border border-ink-900/15 bg-white/60 p-5">
-            <p className="text-sm text-ink-900/70">
+          <div className="mt-8 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between rounded-xl border border-line bg-white p-5">
+            <p className="text-sm text-muted">
               Это демонстрационная версия плана. В полной подписке — экспорт в PDF, чек-листы с
               отметками о выполнении и обновления модулей.
             </p>
             <button
               onClick={restart}
-              className="shrink-0 rounded-full border border-ink-900/20 px-5 py-2 text-sm font-medium text-ink-900 hover:bg-ink-900 hover:text-paper transition-colors"
+              className="shrink-0 rounded-full border border-ink-900/20 px-5 py-2 text-sm font-medium text-ink-900 hover:bg-ink-900 hover:text-white transition-colors"
             >
               Пройти заново
             </button>

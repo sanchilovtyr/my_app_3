@@ -41,9 +41,11 @@ app/
   page.tsx           — сборка лендинга из компонентов
   globals.css         — глобальные стили + Tailwind
 components/
-  RouteHero.tsx        — SVG-иллюстрация маршрута на главном экране
-  PlanBuilder.tsx       — анкета + отображение результата (основной интерактив)
-  PricingSection.tsx     — карточки тарифов
+  HeroPreviewCard.tsx    — карточка-превью плана в хиро-секции
+  JourneySection.tsx      — шаги "как это работает" с соединяющей линией
+  CasesSection.tsx          — демо-кейсы (заменить на реальные результаты клиентов)
+  PlanBuilder.tsx             — анкета + отображение результата (основной интерактив)
+  PricingSection.tsx           — карточки тарифов
 lib/
   types.ts              — типы: Answers, PlanModule, GeneratedPlan
   questions.ts            — конфигурация вопросов анкеты
