@@ -1,75 +1,32 @@
 "use client";
 
 import { useState } from "react";
-
-const PLANS = [
-  {
-    id: "trial",
-    name: "Пробный",
-    price: "0 ₽",
-    period: "разово",
-    description: "Чтобы попробовать сервис и увидеть, как выглядит ваш план",
-    features: [
-      "Один персональный план продвижения",
-      "Ограниченный доступ к шагам этого плана",
-      "Без обновлений и сохранения истории",
-    ],
-    highlighted: false,
-    free: true,
-  },
-  {
-    id: "start",
-    name: "Старт",
-    price: "990 ₽",
-    period: "/мес",
-    description: "Для одного бизнеса, чтобы получить первый чёткий план",
-    features: [
-      "Персональный план продвижения",
-      "Обновление плана раз в месяц",
-      "Доступ ко всем модулям-инструкциям",
-    ],
-    highlighted: false,
-  },
-  {
-    id: "business",
-    name: "Бизнес",
-    price: "2 490 ₽",
-    period: "/мес",
-    description: "Для владельца, который ведёт продвижение сам и хочет контроль",
-    features: [
-      "Всё из тарифа «Старт»",
-      "Чек-листы с отметками о выполнении",
-      "Экспорт плана в PDF",
-      "Обновление плана каждую неделю",
-      "Приоритетная поддержка в Telegram",
-    ],
-    highlighted: true,
-  },
-  {
-    id: "agency",
-    name: "Команда",
-    price: "6 990 ₽",
-    period: "/мес",
-    description: "Для нескольких точек/филиалов или агентства на аутсорсе",
-    features: [
-      "Всё из тарифа «Бизнес»",
-      "До 10 профилей бизнеса в одном аккаунте",
-      "Общий доступ для сотрудников",
-      "Выгрузка планов для клиентов (white-label)",
-    ],
-    highlighted: false,
-  },
-];
+import { PLANS } from "@/lib/plans";
+import { getEmail, activateSubscription } from "@/lib/account";
 
 export default function PricingSection() {
-  const [clicked, setClicked] = useState<string | null>(null);
+  const [notice, setNotice] = useState<{ planId: string; text: string } | null>(null);
 
   const handleClick = (plan: (typeof PLANS)[number]) => {
     if (plan.free) {
       document.querySelector("#wizard")?.scrollIntoView({ behavior: "smooth" });
       return;
     }
-    setClicked(plan.id);
+
+    if (!getEmail()) {
+      setNotice({
+        planId: plan.id,
+        text: "Сначала зарегистрируйтесь по email в анкете ниже — тариф закрепится за вашим аккаунтом.",
+      });
+      document.querySelector("#wizard")?.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+
+    activateSubscription(plan.id);
+    setNotice({
+      planId: plan.id,
+      text: "Тариф активирован в демо-режиме, без реального списания денег. Посмотреть его можно в личном кабинете.",
+    });
   };
 
   return (
@@ -124,10 +81,8 @@ export default function PricingSection() {
             >
               {plan.free ? "Попробовать бесплатно" : "Оформить подписку"}
             </button>
-            {clicked === plan.id && (
-              <p className="mt-3 text-xs font-mono text-violet">
-                Приём оплаты подключается на следующем шаге разработки — см. README проекта.
-              </p>
+            {notice?.planId === plan.id && (
+              <p className="mt-3 text-xs font-mono text-violet">{notice.text}</p>
             )}
           </div>
         ))}

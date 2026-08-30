@@ -1,13 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { QUESTIONS } from "@/lib/questions";
 import { generatePlan } from "@/lib/ruleEngine";
 import { Answers, GeneratedPlan, PlanEntry, Phase } from "@/lib/types";
+import { getPlan, PlanId } from "@/lib/plans";
+import {
+  getEmail,
+  setEmail as persistEmail,
+  clearAccount,
+  getBusinesses,
+  addBusiness,
+  getEffectivePlanId,
+  Business,
+} from "@/lib/account";
 
 type RawAnswers = Record<string, string>;
 
-const EMAIL_STORAGE_KEY = "promoplan_email";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const PHASE_META: Record<Phase, { title: string; note: string }> = {
@@ -23,6 +33,16 @@ const PHASE_META: Record<Phase, { title: string; note: string }> = {
     title: "Этап 3. Удержание и повторные продажи",
     note: "Дешевле удержать клиента, чем привлечь нового",
   },
+};
+
+const BUSINESS_TYPE_LABELS: Record<string, string> = {
+  retail: "Розничная торговля",
+  services: "Услуги",
+  horeca: "Кафе, ресторан",
+  b2b: "B2B",
+  online_edu: "Онлайн-школа",
+  ecommerce: "Интернет-магазин",
+  other: "Другое",
 };
 
 function toAnswers(raw: RawAnswers): Answers {
@@ -129,7 +149,7 @@ function EmailGate({ onRegister }: { onRegister: (email: string) => void }) {
         Для начала — email
       </h2>
       <p className="text-muted mb-6">
-        Понадобится, чтобы сохранить ваш план и прислать его в PDF. Пароль не нужен.
+        Понадобится для личного кабинета: там же можно будет скачать план и управлять подпиской.
       </p>
       <form onSubmit={submit} className="grid gap-3">
         <input
@@ -155,42 +175,112 @@ function EmailGate({ onRegister }: { onRegister: (email: string) => void }) {
   );
 }
 
+function BusinessNameGate({ onSubmit }: { onSubmit: (name: string) => void }) {
+  const [value, setValue] = useState("");
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = value.trim();
+    onSubmit(trimmed || "Мой бизнес");
+  };
+
+  return (
+    <div className="mx-auto max-w-md">
+      <span className="inline-block rounded-full bg-violet-soft px-3 py-1 text-xs font-bold text-violet">
+        Перед вопросами
+      </span>
+      <h2 className="font-display text-2xl md:text-3xl text-ink-900 mt-4 mb-1.5">
+        Как называется бизнес?
+      </h2>
+      <p className="text-muted mb-6">
+        Так план будет проще найти в личном кабинете, если у вас их несколько.
+      </p>
+      <form onSubmit={submit} className="grid gap-3">
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder="Например, «Кофейня на Ленина»"
+          className="w-full rounded-xl border border-line bg-white p-4 text-ink-900 outline-none transition-colors focus:border-violet"
+        />
+        <button
+          type="submit"
+          className="rounded-xl bg-ink-900 px-5 py-4 text-sm font-medium text-white transition-colors hover:bg-ink-800"
+        >
+          Дальше →
+        </button>
+      </form>
+    </div>
+  );
+}
+
+function LimitReached({ planId, limit }: { planId: PlanId; limit: number }) {
+  const plan = getPlan(planId);
+  return (
+    <div className="mx-auto max-w-md text-center">
+      <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-soft text-xl">
+        🔒
+      </div>
+      <h2 className="font-display text-2xl text-ink-900 mb-1.5">Лимит тарифа исчерпан</h2>
+      <p className="text-muted mb-6">
+        Тариф «{plan.name}» позволяет вести {limit === 1 ? "1 бизнес" : `до ${limit} бизнесов`}.
+        Удалите один из существующих в личном кабинете или перейдите на тариф с бо́льшим лимитом.
+      </p>
+      <div className="flex flex-wrap justify-center gap-3">
+        <Link
+          href="/account"
+          className="rounded-full bg-ink-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-ink-800"
+        >
+          Личный кабинет
+        </Link>
+        <a
+          href="#pricing"
+          className="rounded-full border border-ink-900/20 px-5 py-2.5 text-sm font-medium text-ink-900 transition-colors hover:bg-ink-900 hover:text-white"
+        >
+          Сравнить тарифы
+        </a>
+      </div>
+    </div>
+  );
+}
+
 export default function PlanBuilder() {
-  const [email, setEmail] = useState<string | null>(null);
-  const [emailLoaded, setEmailLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const [email, setEmailState] = useState<string | null>(null);
+  const [businesses, setBusinesses] = useState<Business[]>([]);
+  const [effectivePlanId, setEffectivePlanId] = useState<PlanId>("trial");
+
+  const [businessName, setBusinessName] = useState<string | null>(null);
   const [stepIndex, setStepIndex] = useState(0);
   const [raw, setRaw] = useState<RawAnswers>({});
   const [plan, setPlan] = useState<GeneratedPlan | null>(null);
   const [pdfNotice, setPdfNotice] = useState<string | null>(null);
 
   useEffect(() => {
-    try {
-      const stored = window.localStorage.getItem(EMAIL_STORAGE_KEY);
-      if (stored) setEmail(stored);
-    } catch {
-      // localStorage недоступен (например, приватный режим) — просто покажем форму регистрации
-    } finally {
-      setEmailLoaded(true);
-    }
+    setEmailState(getEmail());
+    setBusinesses(getBusinesses());
+    setEffectivePlanId(getEffectivePlanId());
+    setLoaded(true);
   }, []);
 
   const registerEmail = (value: string) => {
-    setEmail(value);
-    try {
-      window.localStorage.setItem(EMAIL_STORAGE_KEY, value);
-    } catch {
-      // не критично для прототипа, если сохранить не получилось
-    }
+    persistEmail(value);
+    setEmailState(value);
   };
 
-  const changeEmail = () => {
-    setEmail(null);
-    try {
-      window.localStorage.removeItem(EMAIL_STORAGE_KEY);
-    } catch {
-      // не критично
-    }
+  const logOut = () => {
+    clearAccount();
+    setEmailState(null);
+    setBusinesses([]);
+    setEffectivePlanId("trial");
+    setBusinessName(null);
+    setRaw({});
+    setStepIndex(0);
+    setPlan(null);
   };
+
+  const planMeta = getPlan(effectivePlanId);
+  const limitReached = businesses.length >= planMeta.businessLimit;
 
   const question = QUESTIONS[stepIndex];
   const isLast = stepIndex === QUESTIONS.length - 1;
@@ -200,7 +290,13 @@ export default function PlanBuilder() {
     const next = { ...raw, [question.id]: value };
     setRaw(next);
     if (isLast) {
-      setPlan(generatePlan(toAnswers(next)));
+      const generated = generatePlan(toAnswers(next));
+      setPlan(generated);
+      const saved = addBusiness({
+        name: businessName || "Мой бизнес",
+        businessType: BUSINESS_TYPE_LABELS[next.businessType] ?? next.businessType,
+      });
+      setBusinesses((prev) => [...prev, saved]);
     } else {
       setStepIndex((s) => s + 1);
     }
@@ -210,10 +306,11 @@ export default function PlanBuilder() {
     if (stepIndex > 0) setStepIndex((s) => s - 1);
   };
 
-  const restart = () => {
+  const startNewBusiness = () => {
     setRaw({});
     setStepIndex(0);
     setPlan(null);
+    setBusinessName(null);
     setPdfNotice(null);
   };
 
@@ -231,7 +328,7 @@ export default function PlanBuilder() {
 
   const answeredValue = raw[question?.id];
 
-  if (!emailLoaded) {
+  if (!loaded) {
     return <div id="wizard" className="scroll-mt-24" />;
   }
 
@@ -239,15 +336,28 @@ export default function PlanBuilder() {
     <div id="wizard" className="scroll-mt-24">
       {!email && <EmailGate onRegister={registerEmail} />}
 
-      {email && !plan && (
+      {email && !plan && businessName === null && limitReached && (
+        <LimitReached planId={effectivePlanId} limit={planMeta.businessLimit} />
+      )}
+
+      {email && !plan && businessName === null && !limitReached && (
+        <BusinessNameGate onSubmit={setBusinessName} />
+      )}
+
+      {email && !plan && businessName !== null && (
         <div className="mx-auto max-w-xl">
           <div className="mb-4 flex items-center justify-between text-xs text-muted">
             <span>
               Вы вошли как <b className="text-ink-900">{email}</b>
             </span>
-            <button onClick={changeEmail} className="underline underline-offset-4 hover:text-ink-900">
-              Изменить email
-            </button>
+            <div className="flex gap-3">
+              <Link href="/account" className="underline underline-offset-4 hover:text-ink-900">
+                Личный кабинет
+              </Link>
+              <button onClick={logOut} className="underline underline-offset-4 hover:text-ink-900">
+                Выйти
+              </button>
+            </div>
           </div>
 
           <div className="mb-6 flex items-center gap-3">
@@ -298,19 +408,24 @@ export default function PlanBuilder() {
         <div>
           <div id="print-plan">
             <div className="mb-8 rounded-xl border border-violet/30 bg-violet/5 p-5 md:p-6">
+              <p className="text-xs font-mono uppercase tracking-wide text-violet mb-2">
+                {businessName}
+              </p>
               <p className="font-display text-lg md:text-xl text-ink-900">{plan.summary}</p>
             </div>
 
             <PlanColumn phase="foundation" entries={plan.foundation} />
             <PlanColumn phase="traffic" entries={plan.traffic} />
+            {planMeta.fullPlanAccess && <PlanColumn phase="retention" entries={plan.retention} />}
           </div>
 
-          <LockedPhaseCard />
+          {!planMeta.fullPlanAccess && <LockedPhaseCard />}
 
           <div className="print:hidden flex flex-col gap-3 rounded-xl border border-line bg-white p-5 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-muted">
-              Пробный план показывает первые 2 этапа из 3. Полная подписка открывает все этапы,
-              чек-листы и еженедельные обновления.
+              {planMeta.fullPlanAccess
+                ? `Тариф «${planMeta.name}» открывает все этапы плана — скачайте PDF или получите его на почту.`
+                : "Пробный план показывает первые 2 этапа из 3. Подписка открывает все этапы, чек-листы и обновления."}
             </p>
             <div className="flex shrink-0 flex-wrap gap-2">
               <button
@@ -326,10 +441,10 @@ export default function PlanBuilder() {
                 Получить PDF на почту
               </button>
               <button
-                onClick={restart}
+                onClick={startNewBusiness}
                 className="rounded-full bg-ink-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-ink-800"
               >
-                Пройти заново
+                Новый бизнес
               </button>
             </div>
           </div>

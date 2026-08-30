@@ -1,3 +1,4 @@
+import SiteHeader from "@/components/SiteHeader";
 import HeroPreviewCard from "@/components/HeroPreviewCard";
 import JourneySection from "@/components/JourneySection";
 import CasesSection from "@/components/CasesSection";
@@ -7,23 +8,7 @@ import PricingSection from "@/components/PricingSection";
 export default function Home() {
   return (
     <main>
-      {/* HEADER */}
-      <header className="border-b border-white/10 bg-ink-900">
-        <div className="mx-auto flex h-[76px] max-w-6xl items-center justify-between px-5 md:px-8">
-          <div className="flex items-center gap-2.5 font-extrabold tracking-tight text-white">
-            <span className="relative h-[30px] w-[30px] -rotate-[20deg] rounded-[50%_50%_50%_8px] bg-brand">
-              <span className="absolute left-[9px] top-[9px] h-2 w-2 rounded-full bg-ink-900" />
-            </span>
-            Ключевое слово
-          </div>
-          <a
-            href="#wizard"
-            className="rounded-[9px] bg-brand px-5 py-3 text-sm font-extrabold text-ink-900 shadow-[0_10px_25px_rgba(0,0,0,0.1)] transition-transform hover:-translate-y-0.5"
-          >
-            Построить план
-          </a>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* HERO */}
       <section className="bg-ink-900 bg-[radial-gradient(circle_at_77%_24%,rgba(118,88,246,0.25),transparent_35%),radial-gradient(circle_at_18%_110%,rgba(203,255,67,0.13),transparent_40%)]">
@@ -119,7 +104,7 @@ export default function Home() {
       <footer className="bg-ink-900 py-7 text-xs text-white/55">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-5 px-5 md:px-8">
           <span>© {new Date().getFullYear()} Ключевое слово</span>
-          <span>Прототип — платёжная интеграция и личный кабинет в разработке</span>
+          <span>Прототип — реальная оплата и подтверждение почты ещё не подключены</span>
         </div>
       </footer>
     </main>
