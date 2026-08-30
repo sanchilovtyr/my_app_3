@@ -1,5 +1,6 @@
 import SiteHeader from "@/components/SiteHeader";
 import HeroPreviewCard from "@/components/HeroPreviewCard";
+import AboutSection from "@/components/AboutSection";
 import JourneySection from "@/components/JourneySection";
 import CasesSection from "@/components/CasesSection";
 import PlanBuilder from "@/components/PlanBuilder";
@@ -41,6 +42,13 @@ export default function Home() {
             </div>
           </div>
           <HeroPreviewCard />
+        </div>
+      </section>
+
+      {/* ABOUT */}
+      <section className="bg-white py-16 md:py-24">
+        <div className="mx-auto max-w-6xl px-5 md:px-8">
+          <AboutSection />
         </div>
       </section>
 
