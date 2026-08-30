@@ -1,13 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import { PLANS } from "@/lib/plans";
+import { PLANS, PricingPlan } from "@/lib/plans";
 import { getEmail, activateSubscription } from "@/lib/account";
+import DisclaimerModal from "@/components/DisclaimerModal";
 
 export default function PricingSection() {
   const [notice, setNotice] = useState<{ planId: string; text: string } | null>(null);
+  const [pendingPlan, setPendingPlan] = useState<PricingPlan | null>(null);
 
-  const handleClick = (plan: (typeof PLANS)[number]) => {
+  const openConfirm = (plan: PricingPlan) => {
+    setNotice(null);
+    setPendingPlan(plan);
+  };
+
+  const confirmPlan = () => {
+    const plan = pendingPlan;
+    setPendingPlan(null);
+    if (!plan) return;
+
     if (plan.free) {
       document.querySelector("#wizard")?.scrollIntoView({ behavior: "smooth" });
       return;
@@ -70,7 +81,7 @@ export default function PricingSection() {
               ))}
             </ul>
             <button
-              onClick={() => handleClick(plan)}
+              onClick={() => openConfirm(plan)}
               className={`w-full rounded-full px-5 py-3 text-sm font-medium transition-colors ${
                 plan.highlighted
                   ? "bg-brand text-ink-900 hover:bg-brand/90"
@@ -87,6 +98,14 @@ export default function PricingSection() {
           </div>
         ))}
       </div>
+
+      {pendingPlan && (
+        <DisclaimerModal
+          planName={pendingPlan.name}
+          onConfirm={confirmPlan}
+          onCancel={() => setPendingPlan(null)}
+        />
+      )}
     </div>
   );
 }

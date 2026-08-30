@@ -1,10 +1,15 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Ключевое слово — персональный план продвижения бизнеса",
   description:
     "Пошаговый план продвижения и привлечения клиентов из интернета для малого и среднего бизнеса в России.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -18,7 +23,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
         />
       </head>
-      <body className="font-body bg-paper text-ink-900 antialiased">{children}</body>
+      <body className="overflow-x-hidden font-body bg-paper text-ink-900 antialiased">
+        {children}
+      </body>
     </html>
   );
 }

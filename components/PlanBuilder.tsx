@@ -346,7 +346,7 @@ export default function PlanBuilder() {
 
       {email && !plan && businessName !== null && (
         <div className="mx-auto max-w-xl">
-          <div className="mb-4 flex items-center justify-between text-xs text-muted">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
             <span>
               Вы вошли как <b className="text-ink-900">{email}</b>
             </span>

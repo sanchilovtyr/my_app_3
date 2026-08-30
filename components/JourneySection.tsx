@@ -60,7 +60,7 @@ export default function JourneySection() {
             Снимаем рутину планирования — вам остаётся выбрать и запустить первые шаги.
           </p>
         </div>
-        <div className="mt-4 flex gap-2.5">
+        <div className="mt-4 flex flex-wrap gap-2.5">
           {[
             { v: "3–5", l: "каналов" },
             { v: "11", l: "модулей" },

@@ -240,7 +240,7 @@ export default function AccountPage() {
             {businesses.map((b) => (
               <div
                 key={b.id}
-                className="flex items-center justify-between rounded-xl border border-line bg-soft p-4"
+                className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-line bg-soft p-4"
               >
                 <div>
                   <p className="font-medium text-ink-900">{b.name}</p>
