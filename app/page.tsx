@@ -1,3 +1,4 @@
+import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import HeroPreviewCard from "@/components/HeroPreviewCard";
 import AboutSection from "@/components/AboutSection";
@@ -18,15 +19,15 @@ export default function Home() {
         <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:gap-12 sm:px-5 sm:py-16 md:grid-cols-[1.04fr_0.96fr] md:items-center md:px-8 md:py-20">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3 py-1.5 text-xs font-bold text-white/85 before:h-[7px] before:w-[7px] before:rounded-full before:bg-brand">
-              Навигатор для владельцев малого и среднего бизнеса
+              Навигатор в маркетинге для владельцев малого и среднего бизнеса
             </span>
             <h1 className="my-5 max-w-[650px] font-display text-3xl leading-[1.15] tracking-tight text-white sm:text-4xl md:text-5xl md:leading-[1.12]">
               Из хаоса в маркетинге — в понятный маршрут к клиентам
             </h1>
             <p className="mb-7 max-w-[570px] text-base text-white/65 sm:text-lg">
-              Отвечаете на 7 вопросов о своём бизнесе — получаете пошаговый план привлечения
-              клиентов: что делать сначала, что потом и почему именно так. Без общих советов
-              «продвигайтесь в соцсетях».
+              Отвечаете на 7 вопросов о своём бизнесе — получаете подписку на пошаговый план
+              привлечения клиентов: что делать сначала, что потом и почему именно так. Без общих
+              советов «продвигайтесь в соцсетях».
             </p>
             <a
               href="#wizard"
@@ -37,9 +38,6 @@ export default function Home() {
             <div className="mt-6 flex flex-wrap gap-5 text-[13px] text-white/70">
               <span className="before:mr-1.5 before:text-brand before:content-['✦']">
                 Первый план бесплатно
-              </span>
-              <span className="before:mr-1.5 before:text-brand before:content-['✦']">
-                Без привязки карты
               </span>
             </div>
           </div>
@@ -136,6 +134,9 @@ export default function Home() {
       <footer className="bg-ink-900 py-7 text-xs text-white/55">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-5 px-5 md:px-8">
           <span>© {new Date().getFullYear()} Ключевое слово</span>
+          <Link href="/oferta" className="underline underline-offset-4 hover:text-white">
+            Договор оферты
+          </Link>
           <span>Прототип — реальная оплата и подтверждение почты ещё не подключены</span>
         </div>
       </footer>

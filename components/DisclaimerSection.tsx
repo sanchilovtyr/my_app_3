@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { DISCLAIMER_PARAGRAPHS } from "@/lib/disclaimer";
 
 export default function DisclaimerSection() {
@@ -11,6 +12,14 @@ export default function DisclaimerSection() {
           <p key={i}>{p}</p>
         ))}
       </div>
+      <p className="mt-5 text-sm text-muted">
+        Полный текст условий использования сервиса —{" "}
+        <Link href="/oferta" className="text-violet underline underline-offset-4">
+          договор публичной оферты
+        </Link>
+        .
+      </p>
     </div>
   );
 }
+

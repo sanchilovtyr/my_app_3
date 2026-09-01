@@ -1,17 +1,27 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function SiteHeader({ ctaHref = "/#wizard" }: { ctaHref?: string }) {
   return (
     <header className="border-b border-white/10 bg-ink-900">
       <div className="mx-auto flex h-[68px] max-w-6xl items-center justify-between gap-3 px-4 sm:h-[76px] sm:gap-4 sm:px-5 md:px-8">
-        <Link
-          href="/"
-          className="flex shrink-0 items-center gap-2.5 font-extrabold tracking-tight text-white"
-        >
-          <span className="relative h-[26px] w-[26px] -rotate-[20deg] rounded-[50%_50%_50%_8px] bg-brand sm:h-[30px] sm:w-[30px]">
-            <span className="absolute left-[8px] top-[8px] h-1.5 w-1.5 rounded-full bg-ink-900 sm:left-[9px] sm:top-[9px] sm:h-2 sm:w-2" />
-          </span>
-          <span className="hidden sm:inline">Ключевое слово</span>
+        <Link href="/" className="flex shrink-0 items-center">
+          <Image
+            src="/logo-mark.png"
+            alt="Ключевое слово"
+            width={106}
+            height={47}
+            priority
+            className="h-8 w-auto sm:hidden"
+          />
+          <Image
+            src="/logo-full.png"
+            alt="Ключевое слово — маркетинговое агентство"
+            width={264}
+            height={47}
+            priority
+            className="hidden h-9 w-auto sm:block"
+          />
         </Link>
         <div className="flex items-center gap-2.5 sm:gap-5">
           <Link

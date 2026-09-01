@@ -1,5 +1,5 @@
-import { Answers, GeneratedPlan, PlanEntry, Phase } from "./types";
-import { MODULES } from "./modules";
+import { Answers, GeneratedPlan, PlanEntry, Phase, PlanModule } from "./types";
+import { getEffectiveModules } from "./adminModules";
 
 const PHASE_LIMITS: Record<Phase, number> = {
   foundation: 3,
@@ -24,8 +24,9 @@ const budgetLabels: Record<Answers["budget"], string> = {
   over500: "бюджетом более 500 000 ₽/мес",
 };
 
-function buildEntries(a: Answers, phase: Phase): PlanEntry[] {
-  return MODULES.filter((m) => m.phase === phase)
+function buildEntries(modules: PlanModule[], a: Answers, phase: Phase): PlanEntry[] {
+  return modules
+    .filter((m) => m.phase === phase)
     .map((m) => ({ module: m, score: m.score(a), reason: m.why(a) }))
     .filter((e) => e.score > 0)
     .sort((x, y) => y.score - x.score)
@@ -33,9 +34,10 @@ function buildEntries(a: Answers, phase: Phase): PlanEntry[] {
 }
 
 export function generatePlan(a: Answers): GeneratedPlan {
-  const foundation = buildEntries(a, "foundation");
-  const traffic = buildEntries(a, "traffic");
-  const retention = buildEntries(a, "retention");
+  const modules = getEffectiveModules();
+  const foundation = buildEntries(modules, a, "foundation");
+  const traffic = buildEntries(modules, a, "traffic");
+  const retention = buildEntries(modules, a, "retention");
 
   const summary = `Персональный маршрут для ${businessLabels[a.businessType]} с ${
     budgetLabels[a.budget]

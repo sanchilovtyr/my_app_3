@@ -74,6 +74,9 @@ export default function AccountPage() {
   const plan = getPlan(subscription.planId);
   const effectiveLimit = getPlan(getEffectivePlanId()).businessLimit;
   const isPaid = !plan.free;
+  const periodStillActive = Boolean(
+    subscription.currentPeriodEnd && new Date(subscription.currentPeriodEnd).getTime() > Date.now()
+  );
 
   if (!loaded) {
     return (
@@ -184,6 +187,15 @@ export default function AccountPage() {
                 {plan.price} {plan.period} ·{" "}
                 {plan.businessLimit === 1 ? "1 бизнес" : `до ${plan.businessLimit} бизнесов`}
               </p>
+              {isPaid && subscription.currentPeriodEnd && (
+                <p className="mt-1 text-sm font-medium text-ink-900">
+                  {subscription.status === "active"
+                    ? `Продлится ${formatDate(subscription.currentPeriodEnd)}`
+                    : periodStillActive
+                    ? `Доступ активен до ${formatDate(subscription.currentPeriodEnd)}`
+                    : `Доступ закончился ${formatDate(subscription.currentPeriodEnd)}`}
+                </p>
+              )}
             </div>
             <div className="flex flex-wrap gap-2">
               {isPaid && subscription.status === "active" && (
@@ -191,7 +203,7 @@ export default function AccountPage() {
                   onClick={handleCancel}
                   className="rounded-full border border-ink-900/20 px-4 py-2 text-sm font-medium text-ink-900 transition-colors hover:bg-ink-900 hover:text-white"
                 >
-                  Отменить подписку
+                  Отказаться от подписки
                 </button>
               )}
               {isPaid && subscription.status === "cancelled" && (
@@ -210,11 +222,15 @@ export default function AccountPage() {
               </a>
             </div>
           </div>
-          {subscription.status === "cancelled" && (
+          {isPaid && subscription.status === "cancelled" && subscription.currentPeriodEnd && (
             <p className="mt-3 text-xs text-muted">
-              Подписка отменена. В боевой версии доступ сохранится до конца оплаченного периода, в
-              этом прототипе он ограничен сразу же — лимит бизнесов и этапы плана уже соответствуют
-              тарифу «Пробный».
+              {periodStillActive
+                ? `Автопродление отключено. Тариф «${plan.name}» и все его возможности останутся доступны до ${formatDate(
+                    subscription.currentPeriodEnd
+                  )}, дальше аккаунт перейдёт на тариф «Пробный».`
+                : `Подписка отменена, оплаченный период закончился ${formatDate(
+                    subscription.currentPeriodEnd
+                  )}. Сейчас действует тариф «Пробный».`}
             </p>
           )}
           <p className="mt-3 text-xs text-muted">

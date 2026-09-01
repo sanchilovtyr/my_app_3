@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { DISCLAIMER_PARAGRAPHS } from "@/lib/disclaimer";
 
 export default function DisclaimerModal({
@@ -56,7 +57,12 @@ export default function DisclaimerModal({
               onChange={(e) => setAgreed(e.target.checked)}
               className="mt-0.5 h-4 w-4 shrink-0 accent-violet"
             />
-            <span>Я ознакомлен(а) с этим текстом и согласен(на) с условиями использования сервиса</span>
+            <span>
+              Я ознакомлен(а) с этим текстом и согласен(на) с условиями{" "}
+              <Link href="/oferta" target="_blank" className="underline underline-offset-4 hover:text-violet">
+                договора оферты
+              </Link>
+            </span>
           </label>
           <div className="flex flex-col-reverse gap-2.5 sm:flex-row sm:justify-end">
             <button

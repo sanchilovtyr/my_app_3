@@ -34,7 +34,7 @@ export const PLANS: PricingPlan[] = [
   {
     id: "start",
     name: "Старт",
-    price: "990 ₽",
+    price: "1 990 ₽",
     period: "/мес",
     description: "Для одного бизнеса, чтобы получить первый чёткий план",
     features: [
@@ -49,7 +49,7 @@ export const PLANS: PricingPlan[] = [
   {
     id: "business",
     name: "Бизнес",
-    price: "2 490 ₽",
+    price: "4 490 ₽",
     period: "/мес",
     description: "Для владельца, который ведёт продвижение сам и хочет контроль",
     features: [
