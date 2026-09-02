@@ -61,6 +61,10 @@ export default function DisclaimerModal({
               Я ознакомлен(а) с этим текстом и согласен(на) с условиями{" "}
               <Link href="/oferta" target="_blank" className="underline underline-offset-4 hover:text-violet">
                 договора оферты
+              </Link>{" "}
+              и{" "}
+              <Link href="/privacy" target="_blank" className="underline underline-offset-4 hover:text-violet">
+                политики обработки персональных данных
               </Link>
             </span>
           </label>

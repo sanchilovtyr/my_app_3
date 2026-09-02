@@ -17,6 +17,10 @@ export default function DisclaimerSection() {
         <Link href="/oferta" className="text-violet underline underline-offset-4">
           договор публичной оферты
         </Link>
+        , условия обработки данных —{" "}
+        <Link href="/privacy" className="text-violet underline underline-offset-4">
+          политика обработки персональных данных
+        </Link>
         .
       </p>
     </div>

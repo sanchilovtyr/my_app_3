@@ -12,7 +12,7 @@ function formatDate(iso: string) {
   }
 }
 
-export default function AdminUsersTab() {
+export default function AdminUsersTab({ onMessage }: { onMessage: (email: string) => void }) {
   const [filter, setFilter] = useState<PlanId | "all">("all");
 
   const users = useMemo(
@@ -61,6 +61,7 @@ export default function AdminUsersTab() {
               <th className="p-4 font-medium">Статус</th>
               <th className="p-4 font-medium">Регистрация</th>
               <th className="p-4 font-medium">Скачанные файлы</th>
+              <th className="p-4 font-medium"></th>
             </tr>
           </thead>
           <tbody>
@@ -96,6 +97,14 @@ export default function AdminUsersTab() {
                         ))}
                       </ul>
                     )}
+                  </td>
+                  <td className="p-4">
+                    <button
+                      onClick={() => onMessage(u.email)}
+                      className="rounded-full border border-ink-900/20 px-3 py-1.5 text-xs font-medium text-ink-900 hover:bg-soft"
+                    >
+                      Написать
+                    </button>
                   </td>
                 </tr>
               );

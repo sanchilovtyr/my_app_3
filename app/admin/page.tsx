@@ -5,6 +5,7 @@ import Link from "next/link";
 import AdminUsersTab from "@/components/AdminUsersTab";
 import AdminModulesTab from "@/components/AdminModulesTab";
 import AdminRevenueTab from "@/components/AdminRevenueTab";
+import AdminMessagesTab from "@/components/AdminMessagesTab";
 
 // ВАЖНО: это не настоящая защита. Пароль лежит прямо в коде фронтенда и виден
 // любому, кто откроет исходники страницы в браузере. Это просто заслон от
@@ -13,10 +14,11 @@ import AdminRevenueTab from "@/components/AdminRevenueTab";
 // проверкой роли администратора (см. README).
 const ADMIN_PASSWORD = "promoplan-admin-2026";
 
-type Tab = "users" | "modules" | "revenue";
+type Tab = "users" | "modules" | "revenue" | "messages";
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "users", label: "Пользователи" },
+  { id: "messages", label: "Сообщения" },
   { id: "modules", label: "Модули плана" },
   { id: "revenue", label: "Выручка" },
 ];
@@ -26,6 +28,12 @@ export default function AdminPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
   const [tab, setTab] = useState<Tab>("users");
+  const [messagePrefill, setMessagePrefill] = useState<string | null>(null);
+
+  const openMessageComposer = (email: string) => {
+    setMessagePrefill(email);
+    setTab("messages");
+  };
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,7 +101,8 @@ export default function AdminPage() {
       </div>
 
       <div className="mx-auto max-w-6xl px-5 py-8 md:px-8">
-        {tab === "users" && <AdminUsersTab />}
+        {tab === "users" && <AdminUsersTab onMessage={openMessageComposer} />}
+        {tab === "messages" && <AdminMessagesTab prefillEmail={messagePrefill} />}
         {tab === "modules" && <AdminModulesTab />}
         {tab === "revenue" && <AdminRevenueTab />}
       </div>

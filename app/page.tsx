@@ -132,12 +132,15 @@ export default function Home() {
       </section>
 
       <footer className="bg-ink-900 py-7 text-xs text-white/55">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-5 px-5 md:px-8">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-5 gap-y-2 px-5 md:px-8">
           <span>© {new Date().getFullYear()} Ключевое слово</span>
           <Link href="/oferta" className="underline underline-offset-4 hover:text-white">
             Договор оферты
           </Link>
-          <span>Прототип — реальная оплата и подтверждение почты ещё не подключены</span>
+          <Link href="/privacy" className="underline underline-offset-4 hover:text-white">
+            Политика персональных данных
+          </Link>
+          <span className="ml-auto">Прототип — реальная оплата и подтверждение почты ещё не подключены</span>
         </div>
       </footer>
     </main>

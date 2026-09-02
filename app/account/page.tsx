@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
+import SupportSection from "@/components/SupportSection";
 import { getPlan } from "@/lib/plans";
 import {
   getEmail,
@@ -293,6 +294,10 @@ export default function AccountPage() {
             )}
           </div>
         </section>
+
+        <div className="mt-8">
+          <SupportSection email={email} />
+        </div>
       </div>
     </main>
   );
