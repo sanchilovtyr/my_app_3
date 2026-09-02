@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SupportSection from "@/components/SupportSection";
+import { deleteThreadForEmail } from "@/lib/support";
 import { getPlan } from "@/lib/plans";
 import {
   getEmail,
@@ -36,6 +37,7 @@ export default function AccountPage() {
   const [subscription, setSubscription] = useState<Subscription>({ planId: "trial", status: "active" });
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [savedNotice, setSavedNotice] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
 
   useEffect(() => {
     setEmail(getEmail());
@@ -68,6 +70,12 @@ export default function AccountPage() {
   };
 
   const handleLogout = () => {
+    clearAccount();
+    window.location.href = "/";
+  };
+
+  const handleDeleteAccount = () => {
+    if (email) deleteThreadForEmail(email);
     clearAccount();
     window.location.href = "/";
   };
@@ -298,6 +306,42 @@ export default function AccountPage() {
         <div className="mt-8">
           <SupportSection email={email} />
         </div>
+
+        <section className="mt-8 rounded-2xl border border-red-200 bg-white p-6">
+          <h2 className="mb-1.5 font-display text-lg text-ink-900">Удаление аккаунта</h2>
+          <p className="mb-4 text-sm text-muted">
+            Удалит профиль, данные подписки, все сохранённые бизнесы и переписку с поддержкой в
+            этом браузере. Это необратимо.
+          </p>
+          {!confirmingDelete ? (
+            <button
+              onClick={() => setConfirmingDelete(true)}
+              className="rounded-full border border-red-300 px-5 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50"
+            >
+              Удалить аккаунт
+            </button>
+          ) : (
+            <div className="rounded-xl border border-red-200 bg-red-50 p-4">
+              <p className="mb-3 text-sm text-red-700">
+                Точно удалить аккаунт {email}? Данные нельзя будет восстановить.
+              </p>
+              <div className="flex flex-wrap gap-2.5">
+                <button
+                  onClick={() => setConfirmingDelete(false)}
+                  className="rounded-full border border-ink-900/20 bg-white px-4 py-2 text-sm font-medium text-ink-900 hover:bg-soft"
+                >
+                  Отмена
+                </button>
+                <button
+                  onClick={handleDeleteAccount}
+                  className="rounded-full bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                >
+                  Да, удалить безвозвратно
+                </button>
+              </div>
+            </div>
+          )}
+        </section>
       </div>
     </main>
   );

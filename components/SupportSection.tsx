@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { addMessage, getThreadForEmail, SupportMessage } from "@/lib/support";
+import ImageAttachField from "@/components/ImageAttachField";
 
 function formatDateTime(iso: string) {
   try {
@@ -19,6 +20,7 @@ function formatDateTime(iso: string) {
 export default function SupportSection({ email }: { email: string }) {
   const [thread, setThread] = useState<SupportMessage[]>([]);
   const [body, setBody] = useState("");
+  const [image, setImage] = useState<string | undefined>(undefined);
   const [sent, setSent] = useState(false);
 
   useEffect(() => {
@@ -27,10 +29,11 @@ export default function SupportSection({ email }: { email: string }) {
 
   const send = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!body.trim()) return;
-    addMessage(email, "user", body);
+    if (!body.trim() && !image) return;
+    addMessage(email, "user", body, image);
     setThread(getThreadForEmail(email));
     setBody("");
+    setImage(undefined);
     setSent(true);
     setTimeout(() => setSent(false), 2500);
   };
@@ -53,7 +56,15 @@ export default function SupportSection({ email }: { email: string }) {
               <p className="mb-1 text-[11px] font-medium text-muted">
                 {m.from === "admin" ? "Поддержка" : "Вы"} · {formatDateTime(m.createdAt)}
               </p>
-              <p className="whitespace-pre-wrap">{m.body}</p>
+              {m.body && <p className="whitespace-pre-wrap">{m.body}</p>}
+              {m.imageDataUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={m.imageDataUrl}
+                  alt="Вложение"
+                  className={`max-h-64 rounded-lg ${m.body ? "mt-2" : ""}`}
+                />
+              )}
             </div>
           ))}
         </div>
@@ -67,6 +78,7 @@ export default function SupportSection({ email }: { email: string }) {
           rows={3}
           className="w-full resize-none rounded-xl border border-line p-3.5 text-sm outline-none focus:border-violet"
         />
+        <ImageAttachField value={image} onChange={setImage} />
         <div className="flex items-center gap-3">
           <button
             type="submit"

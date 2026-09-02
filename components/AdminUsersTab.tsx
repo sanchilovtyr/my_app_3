@@ -14,19 +14,24 @@ function formatDate(iso: string) {
 
 export default function AdminUsersTab({ onMessage }: { onMessage: (email: string) => void }) {
   const [filter, setFilter] = useState<PlanId | "all">("all");
+  const [removedIds, setRemovedIds] = useState<string[]>([]);
 
   const users = useMemo(
-    () => (filter === "all" ? MOCK_USERS : MOCK_USERS.filter((u) => u.planId === filter)),
-    [filter]
+    () =>
+      MOCK_USERS.filter((u) => !removedIds.includes(u.id)).filter(
+        (u) => filter === "all" || u.planId === filter
+      ),
+    [filter, removedIds]
   );
 
   const counts = useMemo(() => {
-    const map: Record<string, number> = { all: MOCK_USERS.length };
+    const active = MOCK_USERS.filter((u) => !removedIds.includes(u.id));
+    const map: Record<string, number> = { all: active.length };
     for (const plan of PLANS) {
-      map[plan.id] = MOCK_USERS.filter((u) => u.planId === plan.id).length;
+      map[plan.id] = active.filter((u) => u.planId === plan.id).length;
     }
     return map;
-  }, []);
+  }, [removedIds]);
 
   return (
     <div>
@@ -99,12 +104,24 @@ export default function AdminUsersTab({ onMessage }: { onMessage: (email: string
                     )}
                   </td>
                   <td className="p-4">
-                    <button
-                      onClick={() => onMessage(u.email)}
-                      className="rounded-full border border-ink-900/20 px-3 py-1.5 text-xs font-medium text-ink-900 hover:bg-soft"
-                    >
-                      Написать
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => onMessage(u.email)}
+                        className="rounded-full border border-ink-900/20 px-3 py-1.5 text-xs font-medium text-ink-900 hover:bg-soft"
+                      >
+                        Написать
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (window.confirm(`Удалить аккаунт ${u.email}?`)) {
+                            setRemovedIds((ids) => [...ids, u.id]);
+                          }
+                        }}
+                        className="rounded-full border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50"
+                      >
+                        Удалить
+                      </button>
+                    </div>
                   </td>
                 </tr>
               );

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { addMessage, getThreads, SupportThread } from "@/lib/support";
 import { MOCK_USERS } from "@/lib/adminMockData";
+import ImageAttachField from "@/components/ImageAttachField";
 
 function formatDateTime(iso: string) {
   try {
@@ -21,6 +22,7 @@ export default function AdminMessagesTab({ prefillEmail }: { prefillEmail?: stri
   const [version, setVersion] = useState(0);
   const [email, setEmail] = useState(prefillEmail ?? "");
   const [body, setBody] = useState("");
+  const [image, setImage] = useState<string | undefined>(undefined);
   const [sent, setSent] = useState(false);
 
   useEffect(() => {
@@ -31,9 +33,10 @@ export default function AdminMessagesTab({ prefillEmail }: { prefillEmail?: stri
 
   const send = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim() || !body.trim()) return;
-    addMessage(email, "admin", body);
+    if (!email.trim() || (!body.trim() && !image)) return;
+    addMessage(email, "admin", body, image);
     setBody("");
+    setImage(undefined);
     setSent(true);
     setVersion((v) => v + 1);
     setTimeout(() => setSent(false), 2500);
@@ -69,6 +72,7 @@ export default function AdminMessagesTab({ prefillEmail }: { prefillEmail?: stri
             rows={3}
             className="w-full resize-none rounded-xl border border-line p-3 text-sm outline-none focus:border-violet"
           />
+          <ImageAttachField value={image} onChange={setImage} />
           <div className="flex items-center gap-3">
             <button
               type="submit"
@@ -142,7 +146,15 @@ function ThreadCard({
               <p className="mb-1 text-[11px] font-medium text-muted">
                 {m.from === "admin" ? "Поддержка" : "Пользователь"} · {formatDateTime(m.createdAt)}
               </p>
-              <p className="whitespace-pre-wrap">{m.body}</p>
+              {m.body && <p className="whitespace-pre-wrap">{m.body}</p>}
+              {m.imageDataUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={m.imageDataUrl}
+                  alt="Вложение"
+                  className={`max-h-64 rounded-lg ${m.body ? "mt-2" : ""}`}
+                />
+              )}
             </div>
           ))}
         </div>
