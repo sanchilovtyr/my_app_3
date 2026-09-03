@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import VectorSection from "@/components/VectorSection";
 import { QUESTIONS } from "@/lib/questions";
 import { generatePlan } from "@/lib/ruleEngine";
 import { Answers, GeneratedPlan, PlanEntry, Phase } from "@/lib/types";
@@ -100,6 +101,27 @@ function PlanColumn({ phase, entries }: { phase: Phase; entries: PlanEntry[] }) 
           </details>
         ))}
       </div>
+    </div>
+  );
+}
+
+function LockedVectorCard() {
+  return (
+    <div className="print:hidden mt-10 rounded-2xl border border-dashed border-ink-900/20 bg-soft p-6 text-center">
+      <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-ink-900 text-brand">
+        🔒
+      </div>
+      <h3 className="font-display text-lg text-ink-900 mb-1.5">Вектор аудитории</h3>
+      <p className="mx-auto mb-4 max-w-md text-sm text-muted">
+        На тарифах «Бизнес» и «Команда» доступен мини-квиз, который определяет психологический
+        профиль вашей аудитории и даёт рекомендации по тону и формату рекламы под него.
+      </p>
+      <a
+        href="#pricing"
+        className="inline-block rounded-full bg-ink-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-ink-800"
+      >
+        Посмотреть тарифы
+      </a>
     </div>
   );
 }
@@ -420,6 +442,12 @@ export default function PlanBuilder() {
           </div>
 
           {!planMeta.fullPlanAccess && <LockedPhaseCard />}
+
+          {planMeta.audienceVectorAccess ? (
+            <VectorSection />
+          ) : (
+            <LockedVectorCard />
+          )}
 
           <div className="print:hidden flex flex-col gap-3 rounded-xl border border-line bg-white p-5 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-muted">

@@ -13,6 +13,8 @@ export interface PricingPlan {
   businessLimit: number;
   /** Виден ли этап 3 (удержание) в готовом плане */
   fullPlanAccess: boolean;
+  /** Доступен ли мини-квиз "вектор аудитории" с рекомендациями по рекламе */
+  audienceVectorAccess: boolean;
 }
 
 export const PLANS: PricingPlan[] = [
@@ -30,6 +32,7 @@ export const PLANS: PricingPlan[] = [
     free: true,
     businessLimit: 1,
     fullPlanAccess: false,
+    audienceVectorAccess: false,
   },
   {
     id: "start",
@@ -45,6 +48,7 @@ export const PLANS: PricingPlan[] = [
     ],
     businessLimit: 1,
     fullPlanAccess: true,
+    audienceVectorAccess: false,
   },
   {
     id: "business",
@@ -59,10 +63,12 @@ export const PLANS: PricingPlan[] = [
       "Экспорт плана в PDF",
       "Обновление плана каждую неделю",
       "Техническая поддержка",
+      "Определение вектора аудитории и рекомендации по рекламе",
     ],
     highlighted: true,
     businessLimit: 3,
     fullPlanAccess: true,
+    audienceVectorAccess: true,
   },
   {
     id: "agency",
@@ -77,9 +83,11 @@ export const PLANS: PricingPlan[] = [
       "Экспорт плана в PDF",
       "Обновление плана каждую неделю",
       "Техническая поддержка",
+      "Определение вектора аудитории и рекомендации по рекламе",
     ],
     businessLimit: 5,
     fullPlanAccess: true,
+    audienceVectorAccess: true,
   },
 ];
 
